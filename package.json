@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/oniani1/queryguard.git"
   },
-  "homepage": "https://github.com/oniani1/queryguard",
+  "homepage": "https://oniani1.github.io/queryguard",
   "bugs": "https://github.com/oniani1/queryguard/issues",
   "keywords": [
     "n-plus-one", "n+1", "query", "performance", "database",
