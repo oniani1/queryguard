@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import pg from 'pg'
-import { trackQueries, uninstall, resetConfig } from 'queryguard'
+import { trackQueries, uninstall, resetConfig } from 'qguard'
 
 const DB_URL = 'postgresql://postgres:spike@localhost:5432/spike'
 

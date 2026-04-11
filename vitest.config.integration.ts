@@ -4,9 +4,9 @@ import path from 'node:path'
 export default defineConfig({
   resolve: {
     alias: {
-      'queryguard/vitest': path.resolve(__dirname, 'src/integrations/vitest.ts'),
-      'queryguard/jest': path.resolve(__dirname, 'src/integrations/jest.ts'),
-      queryguard: path.resolve(__dirname, 'src/index.ts'),
+      'qguard/vitest': path.resolve(__dirname, 'src/integrations/vitest.ts'),
+      'qguard/jest': path.resolve(__dirname, 'src/integrations/jest.ts'),
+      qguard: path.resolve(__dirname, 'src/index.ts'),
     },
   },
   test: {

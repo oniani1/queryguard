@@ -1,5 +1,5 @@
 {
-  "name": "@oniani1/queryguard",
+  "name": "qguard",
   "version": "0.1.0",
   "description": "Detect N+1 queries at the driver level. Zero config. Works with any ORM.",
   "type": "module",
