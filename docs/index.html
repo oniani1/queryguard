@@ -490,27 +490,27 @@ footer {
 <section>
   <div class="container">
     <div class="section-label">Real-world impact</div>
-    <div class="section-title">Found 3 N+1 queries in Twenty CRM</div>
-    <div class="section-desc">We ran QueryGuard against Twenty CRM, a 43,800-star open-source project. It found sequential <code>findOne</code> calls inside a for loop. The fix was three batch queries.</div>
+    <div class="section-title">Found 6 N+1 queries in Logto</div>
+    <div class="section-desc">We ran QueryGuard against Logto, an 11,900-star open-source auth platform. Their admin Roles page fires 6 individual queries per role in a paginated list of 20. Every admin, every visit, unconditionally.</div>
 
     <div class="comparison-row">
       <div class="comp-card">
         <h3><span class="comp-dot red"></span> Before</h3>
-        <div class="comp-stat red">16</div>
-        <div class="comp-sub">queries per invocation</div>
+        <div class="comp-stat red">122</div>
+        <div class="comp-sub">queries per page load</div>
         <div style="margin-top:16px">
-          <div class="comp-stat red" style="font-size:32px">3</div>
-          <div class="comp-sub">N+1 detections</div>
+          <div class="comp-stat red" style="font-size:32px">734ms</div>
+          <div class="comp-sub">query time</div>
         </div>
       </div>
       <div class="arrow-col">&rarr;</div>
       <div class="comp-card">
         <h3><span class="comp-dot green"></span> After</h3>
-        <div class="comp-stat green">4</div>
-        <div class="comp-sub">queries per invocation</div>
+        <div class="comp-stat green">5</div>
+        <div class="comp-sub">queries per page load</div>
         <div style="margin-top:16px">
-          <div class="comp-stat green" style="font-size:32px">0</div>
-          <div class="comp-sub">N+1 detections</div>
+          <div class="comp-stat green" style="font-size:32px">4ms</div>
+          <div class="comp-sub">query time</div>
         </div>
       </div>
     </div>
@@ -525,20 +525,20 @@ footer {
 
     <div class="proof-cards">
       <div class="proof-card">
+        <h3>Logto</h3>
+        <div class="proof-stars">11,900 stars on GitHub</div>
+        <div class="proof-stat"><span class="psl">N+1 patterns found</span><span class="psv found">6</span></div>
+        <div class="proof-stat"><span class="psl">Queries before fix</span><span class="psv">122</span></div>
+        <div class="proof-stat"><span class="psl">Queries after fix</span><span class="psv good">5</span></div>
+        <div class="proof-stat"><span class="psl">Response time reduction</span><span class="psv good">734ms to 4ms</span></div>
+      </div>
+      <div class="proof-card">
         <h3>Payload CMS</h3>
         <div class="proof-stars">41,700 stars on GitHub</div>
         <div class="proof-stat"><span class="psl">Tests run with QueryGuard</span><span class="psv">136</span></div>
         <div class="proof-stat"><span class="psl">False positives</span><span class="psv good">0</span></div>
         <div class="proof-stat"><span class="psl">Performance overhead</span><span class="psv good">0%</span></div>
         <div class="proof-stat"><span class="psl">Tests broken</span><span class="psv good">0</span></div>
-      </div>
-      <div class="proof-card">
-        <h3>Twenty CRM</h3>
-        <div class="proof-stars">43,800 stars on GitHub</div>
-        <div class="proof-stat"><span class="psl">N+1 queries found</span><span class="psv found">3</span></div>
-        <div class="proof-stat"><span class="psl">Queries before fix</span><span class="psv">16</span></div>
-        <div class="proof-stat"><span class="psl">Queries after fix</span><span class="psv good">4</span></div>
-        <div class="proof-stat"><span class="psl">Affected services</span><span class="psv">2</span></div>
       </div>
     </div>
   </div>

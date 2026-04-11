@@ -18,13 +18,13 @@
   "types": "./dist/index.d.ts",
   "sideEffects": false,
   "exports": {
-    ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" },
-    "./vitest": { "import": "./dist/integrations/vitest.js", "types": "./dist/integrations/vitest.d.ts" },
-    "./jest": { "import": "./dist/integrations/jest.js", "types": "./dist/integrations/jest.d.ts" },
-    "./express": { "import": "./dist/middleware/express.js", "types": "./dist/middleware/express.d.ts" },
-    "./next": { "import": "./dist/middleware/next.js", "types": "./dist/middleware/next.d.ts" },
-    "./hono": { "import": "./dist/middleware/hono.js", "types": "./dist/middleware/hono.d.ts" },
-    "./fastify": { "import": "./dist/middleware/fastify.js", "types": "./dist/middleware/fastify.d.ts" }
+    ".": { "import": "./dist/index.js", "require": "./dist/index.js", "types": "./dist/index.d.ts" },
+    "./vitest": { "import": "./dist/integrations/vitest.js", "require": "./dist/integrations/vitest.js", "types": "./dist/integrations/vitest.d.ts" },
+    "./jest": { "import": "./dist/integrations/jest.js", "require": "./dist/integrations/jest.js", "types": "./dist/integrations/jest.d.ts" },
+    "./express": { "import": "./dist/middleware/express.js", "require": "./dist/middleware/express.js", "types": "./dist/middleware/express.d.ts" },
+    "./next": { "import": "./dist/middleware/next.js", "require": "./dist/middleware/next.js", "types": "./dist/middleware/next.d.ts" },
+    "./hono": { "import": "./dist/middleware/hono.js", "require": "./dist/middleware/hono.js", "types": "./dist/middleware/hono.d.ts" },
+    "./fastify": { "import": "./dist/middleware/fastify.js", "require": "./dist/middleware/fastify.js", "types": "./dist/middleware/fastify.d.ts" }
   },
   "files": ["dist", "LICENSE", "CHANGELOG.md"],
   "engines": { "node": ">=20.0.0" },

@@ -176,13 +176,17 @@ queryguard is disabled when `NODE_ENV=production` unless you explicitly set `QUE
 
 ## Validation
 
+### Logto (11.9k stars)
+
+queryguard found 6 N+1 patterns in Logto's `GET /api/roles` endpoint. The admin console calls this on every visit to the Roles page. For each role in a paginated list of 20, the handler runs 6 individual queries: count users, find user-role relations, find users by IDs, count applications, find application-role relations, find applications by IDs. That's 122 queries per page load. The fix — four batch queries with `GROUP BY role_id` — brings it to 5 queries total.
+
 ### Payload CMS (41.7k stars)
 
-Installed queryguard into Payload's test suite. All 136 tests passed with zero false positives and zero measurable overhead. A simulated N+1 (findMany in a loop) was correctly detected and reported.
+Installed queryguard into Payload's test suite. All 136 tests passed with zero false positives and zero measurable overhead.
 
-### Twenty CRM (43.8k stars)
+### Infisical (25.8k stars)
 
-queryguard found 3 real N+1 patterns in Twenty's `addToAccountsToReconnect` function, used by both the messaging and calendar sync modules. The fix batched individual account lookups into a single query, reducing the query count from 16 to 4.
+Code analysis found N+1 patterns in the SSH hosts endpoint (`listSshHosts`), which fetches all projects in an organization and runs 6-7 queries per project for permission checks and host lookups. An org with 100 projects generates 300-400 queries per page load.
 
 ## Comparison
 
