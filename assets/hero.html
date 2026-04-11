@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d1117;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 32px;
+  }
+
+  .terminal {
+    background: #161b22;
+    border-radius: 12px;
+    border: 1px solid #30363d;
+    overflow: hidden;
+    width: 780px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+  }
+
+  .terminal-wide {
+    width: 1140px;
+  }
+
+  .titlebar {
+    background: #1c2128;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #30363d;
+  }
+
+  .dot {
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #febc2e; }
+  .dot-green { background: #28c840; }
+
+  .titlebar-text {
+    color: #8b949e;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    margin-left: 8px;
+  }
+
+  .content {
+    padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: #c9d1d9;
+  }
+
+  .vitest-header {
+    color: #8b949e;
+    margin-bottom: 4px;
+  }
+
+  .fail { color: #f85149; font-weight: 700; }
+  .pass { color: #3fb950; }
+  .dim { color: #6e7681; }
+  .filename { color: #c9d1d9; }
+  .testname { color: #c9d1d9; }
+  .sql { color: #79c0ff; }
+  .number { color: #d2a8ff; }
+  .path { color: #ffa657; }
+  .fingerprint { color: #8b949e; }
+  .label { color: #c9d1d9; }
+  .indent { padding-left: 24px; display: block; }
+  .indent2 { padding-left: 48px; display: block; }
+  .blank { height: 12px; }
+
+  .summary {
+    border-top: 1px solid #30363d;
+    padding: 16px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #8b949e;
+  }
+
+  .summary-label { color: #6e7681; display: inline-block; width: 120px; }
+</style>
+</head>
+<body>
+<div class="terminal" id="terminal">
+  <div class="titlebar">
+    <div class="dot dot-red"></div>
+    <div class="dot dot-yellow"></div>
+    <div class="dot dot-green"></div>
+    <span class="titlebar-text">vitest run</span>
+  </div>
+  <div class="content">
+    <div>
+      <span class="fail"> FAIL </span>
+      <span class="filename"> src/handlers/dashboard.test.ts</span>
+      <span class="dim"> &gt; dashboard handler</span>
+    </div>
+    <div>
+      <span class="indent"><span class="fail">  &#x2717;</span> <span class="testname">has no N+1 queries</span> <span class="dim">(3ms)</span></span>
+    </div>
+
+    <div class="blank"></div>
+
+    <div>
+      <span class="indent"><span class="fail">QueryGuardError:</span> <span class="label">N+1 query detected</span></span>
+    </div>
+
+    <div class="blank"></div>
+
+    <div>
+      <span class="indent"><span class="label">Repeated query executed <span class="number">10</span> times:</span></span>
+      <span class="indent2"><span class="sql">SELECT * FROM "posts" WHERE "user_id" = ?</span></span>
+    </div>
+
+    <div class="blank"></div>
+
+    <div>
+      <span class="indent"><span class="label">Called from:</span></span>
+      <span class="indent2"><span class="path">src/handlers/dashboard.ts:47</span></span>
+      <span class="indent2"><span class="dim">users.map(u =&gt; prisma.post.findMany({ where: { userId: u.id } }))</span></span>
+    </div>
+
+    <div class="blank"></div>
+
+    <div>
+      <span class="indent"><span class="label">Total queries: <span class="number">11</span></span> <span class="dim">(1 expected + 10 duplicates)</span></span>
+      <span class="indent"><span class="label">Time in duplicates: <span class="number">247ms</span></span> <span class="dim">(89% of query time)</span></span>
+    </div>
+
+    <div class="blank"></div>
+
+    <div>
+      <span class="indent"><span class="fingerprint">Fingerprint: a3f2b1c9</span></span>
+    </div>
+  </div>
+  <div class="summary">
+    <div><span class="summary-label">Test Files</span> <span class="fail">1 failed</span> <span class="dim">(1)</span></div>
+    <div><span class="summary-label">Tests</span> <span class="fail">1 failed</span> <span class="dim">|</span> <span class="pass">4 passed</span> <span class="dim">(5)</span></div>
+    <div><span class="summary-label">Duration</span> <span class="dim">1.24s</span></div>
+  </div>
+</div>
+</body>
+</html>

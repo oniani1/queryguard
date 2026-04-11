@@ -1,0 +1,69 @@
+{
+  "name": "queryguard",
+  "version": "0.1.0",
+  "description": "Detect N+1 queries at the driver level. Zero config. Works with any ORM.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oniani1/queryguard.git"
+  },
+  "homepage": "https://github.com/oniani1/queryguard",
+  "bugs": "https://github.com/oniani1/queryguard/issues",
+  "keywords": [
+    "n-plus-one", "n+1", "query", "performance", "database",
+    "sql", "orm", "prisma", "drizzle", "typeorm", "knex",
+    "postgres", "testing", "vitest", "typescript"
+  ],
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" },
+    "./vitest": { "import": "./dist/integrations/vitest.js", "types": "./dist/integrations/vitest.d.ts" },
+    "./jest": { "import": "./dist/integrations/jest.js", "types": "./dist/integrations/jest.d.ts" },
+    "./express": { "import": "./dist/middleware/express.js", "types": "./dist/middleware/express.d.ts" },
+    "./next": { "import": "./dist/middleware/next.js", "types": "./dist/middleware/next.d.ts" },
+    "./hono": { "import": "./dist/middleware/hono.js", "types": "./dist/middleware/hono.d.ts" },
+    "./fastify": { "import": "./dist/middleware/fastify.js", "types": "./dist/middleware/fastify.d.ts" }
+  },
+  "files": ["dist", "LICENSE", "CHANGELOG.md"],
+  "engines": { "node": ">=20.0.0" },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "vitest run --config vitest.config.integration.ts",
+    "bench": "vitest bench",
+    "lint": "biome check src/",
+    "format": "biome format --write src/ test/",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "pg": ">=8.0.0",
+    "vitest": ">=1.0.0",
+    "@jest/globals": ">=29.0.0",
+    "express": ">=4.0.0",
+    "hono": ">=4.0.0",
+    "fastify": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "pg": { "optional": true },
+    "vitest": { "optional": true },
+    "@jest/globals": { "optional": true },
+    "express": { "optional": true },
+    "hono": { "optional": true },
+    "fastify": { "optional": true }
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
+    "@types/express": "^5.0.0",
+    "@types/pg": "^8.11.0",
+    "express": "^5.1.0",
+    "fastify": "^5.0.0",
+    "hono": "^4.0.0",
+    "pg": "^8.16.0",
+    "testcontainers": "^10.0.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.0.0"
+  }
+}

@@ -1,0 +1,6 @@
+export { install, uninstall } from './drivers/install.js'
+export { configure, getConfig, resetConfig } from './core/config.js'
+export type { QueryGuardConfig } from './core/config.js'
+export type { DetectionReport, Detection } from './core/detector.js'
+export type { RecordedQuery, TrackingContext } from './core/tracker.js'
+export { trackQueries } from './integrations/shared.js'
