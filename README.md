@@ -184,9 +184,9 @@ queryguard found 6 N+1 patterns in Logto's `GET /api/roles` endpoint. The admin 
 
 Installed queryguard into Payload's test suite. All 136 tests passed with zero false positives and zero measurable overhead.
 
-### Infisical (25.8k stars)
+### Twenty CRM (43.8k stars)
 
-Code analysis found N+1 patterns in the SSH hosts endpoint (`listSshHosts`), which fetches all projects in an organization and runs 6-7 queries per project for permission checks and host lookups. An org with 100 projects generates 300-400 queries per page load.
+Code analysis found N+1 patterns in multiple GraphQL resolvers missing DataLoaders. The `NavigationMenuItem` resolver runs an individual database query per pinned record on every page load. The API Key resolver calls a batch-ready service with single IDs. Both are on the request path and affect every user.
 
 ## Comparison
 
