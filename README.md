@@ -7,11 +7,11 @@ Catch N+1 queries in your tests before they hit production.
 </p>
 
 ```bash
-npm install queryguard
+npm install @oniani1/queryguard
 ```
 
 ```ts
-import { assertNoNPlusOne } from 'queryguard/vitest'
+import { assertNoNPlusOne } from '@oniani1/queryguard/vitest'
 
 test('listing users does not N+1', async () => {
   await assertNoNPlusOne(() => handler(req, res))
@@ -60,7 +60,7 @@ queryguard monkey-patches `pg.Client.prototype.query` and `pg.Pool.prototype.que
 Runs a function and throws if any N+1 pattern is detected. Available from `queryguard/vitest` and `queryguard/jest`.
 
 ```ts
-import { assertNoNPlusOne } from 'queryguard/vitest'
+import { assertNoNPlusOne } from '@oniani1/queryguard/vitest'
 
 test('no N+1 on user list', async () => {
   await assertNoNPlusOne(() => listUsers())
@@ -79,7 +79,7 @@ await assertNoNPlusOne(() => listUsers(), {
 Sets a hard cap on total query count. Useful for endpoints where you know the exact expected query count.
 
 ```ts
-import { queryBudget } from 'queryguard/vitest'
+import { queryBudget } from '@oniani1/queryguard/vitest'
 
 test('dashboard runs at most 5 queries', async () => {
   await queryBudget(5, () => loadDashboard())
@@ -91,7 +91,7 @@ test('dashboard runs at most 5 queries', async () => {
 Programmatic access to the detection report without throwing. Use this when you want to inspect results yourself.
 
 ```ts
-import { trackQueries, install } from 'queryguard'
+import { trackQueries, install } from '@oniani1/queryguard'
 
 await install()
 const { result, report } = await trackQueries(() => handler(req, res))
@@ -105,19 +105,19 @@ Each middleware export wraps incoming requests in an `AsyncLocalStorage` context
 
 ```ts
 // Express
-import { queryGuard } from 'queryguard/express'
+import { queryGuard } from '@oniani1/queryguard/express'
 app.use(queryGuard({ mode: 'warn' }))
 
 // Next.js (App Router)
-import { withQueryGuard } from 'queryguard/next'
+import { withQueryGuard } from '@oniani1/queryguard/next'
 export default withQueryGuard(handler)
 
 // Hono
-import { queryGuard } from 'queryguard/hono'
+import { queryGuard } from '@oniani1/queryguard/hono'
 app.use(queryGuard())
 
 // Fastify
-import { queryGuard } from 'queryguard/fastify'
+import { queryGuard } from '@oniani1/queryguard/fastify'
 app.register(queryGuard)
 ```
 
@@ -126,7 +126,7 @@ Middleware supports three modes: `error` (throw/log error), `warn` (log warning)
 ## Configuration
 
 ```ts
-import { configure } from 'queryguard'
+import { configure } from '@oniani1/queryguard'
 
 configure({
   threshold: 3,            // flag queries repeated more than 3 times (default: 2)
@@ -147,7 +147,7 @@ In pnpm monorepos, each workspace gets its own copy of `pg`. queryguard patches 
 
 ```ts
 import pg from 'pg'
-import { install } from 'queryguard'
+import { install } from '@oniani1/queryguard'
 
 await install({ pg })
 ```
