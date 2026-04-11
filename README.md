@@ -178,7 +178,7 @@ queryguard is disabled when `NODE_ENV=production` unless you explicitly set `QUE
 
 ### Logto (11.9k stars)
 
-queryguard found 6 N+1 patterns in Logto's `GET /api/roles` endpoint. The admin console calls this on every visit to the Roles page. For each role in a paginated list of 20, the handler runs 6 individual queries: count users, find user-role relations, find users by IDs, count applications, find application-role relations, find applications by IDs. That's 122 queries per page load. The fix — four batch queries with `GROUP BY role_id` — brings it to 5 queries total.
+queryguard found 6 N+1 patterns in Logto's `GET /api/roles` endpoint. The admin console calls this on every visit to the Roles page. For each role in a paginated list of 20, the handler runs 6 individual queries: count users, find user-role relations, find users by IDs, count applications, find application-role relations, find applications by IDs. That's 122 queries per page load. The fix — four batch queries with `GROUP BY role_id` — brings it to about 8 queries total.
 
 ### Payload CMS (41.7k stars)
 
