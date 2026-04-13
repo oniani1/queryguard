@@ -2,3 +2,22 @@ node_modules/
 dist/
 *.tsbuildinfo
 .env
+
+# Dogfooding clones (Logto, Twenty, Payload, etc.)
+dogfood/
+
+# Duplicate repo clone
+queryguard/
+
+# Phase 0 spike directories
+phase0/
+
+# Playwright MCP session logs
+.playwright-mcp/
+
+# Launch strategy (not public)
+launch-posts.md
+
+# Temp screenshots
+landing-full.png
+landing-hero.png
