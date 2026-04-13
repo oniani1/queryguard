@@ -1,10 +1,10 @@
-import { configure, getConfig, resetConfig } from '../core/config.js'
+import { configure, getConfig } from '../core/config.js'
 import type { QueryGuardConfig } from '../core/config.js'
 import { detect } from '../core/detector.js'
 import type { DetectionReport } from '../core/detector.js'
 import { formatReport } from '../core/report.js'
 import { captureFullStack } from '../core/stack.js'
-import { createContext, recordQuery, runInContext } from '../core/tracker.js'
+import { createContext, runInContext } from '../core/tracker.js'
 import { install } from '../drivers/install.js'
 
 export class QueryGuardError extends Error {
