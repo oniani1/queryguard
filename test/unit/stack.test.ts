@@ -73,6 +73,17 @@ describe('cleanseStack', () => {
     expect(cleanseStack([pgFrame, userFrame])).toEqual([userFrame])
   })
 
+  it('strips node_modules/mysql2 frames', () => {
+    const frame: StackFrame = {
+      file: '/app/node_modules/mysql2/lib/connection.js',
+      line: 1,
+      column: 1,
+      fn: 'query',
+      raw: 'at query (/app/node_modules/mysql2/lib/connection.js:1:1)',
+    }
+    expect(cleanseStack([frame, userFrame])).toEqual([userFrame])
+  })
+
   it('strips node_modules/@prisma frames', () => {
     const frame: StackFrame = {
       file: '/app/node_modules/@prisma/client/runtime/library.js',

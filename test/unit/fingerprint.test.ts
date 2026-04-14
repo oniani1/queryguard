@@ -46,6 +46,26 @@ describe('normalize', () => {
     expect(normalize('SELECT * FROM users WHERE id = ? AND name = ?'))
       .toBe('select * from users where id = ? and name = ?')
   })
+
+  it('preserves backtick-quoted identifiers', () => {
+    expect(normalize('SELECT `userId`, `Post` FROM `Users`'))
+      .toBe('select `userId`, `Post` from `Users`')
+  })
+
+  it('does not mangle numbers inside backtick identifiers', () => {
+    expect(normalize('SELECT * FROM `table123` WHERE `col` = ?'))
+      .toBe('select * from `table123` where `col` = ?')
+  })
+
+  it('does not mangle backtick identifier that is all digits', () => {
+    expect(normalize('SELECT * FROM `42`'))
+      .toBe('select * from `42`')
+  })
+
+  it('preserves mixed double-quote and backtick identifiers', () => {
+    expect(normalize('SELECT "pgCol", `mysqlCol` FROM "pgTable"'))
+      .toBe('select "pgCol", `mysqlCol` from "pgTable"')
+  })
 })
 
 describe('fingerprint', () => {

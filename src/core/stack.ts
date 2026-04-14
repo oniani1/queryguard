@@ -10,6 +10,7 @@ const FRAME_RE = /at (?:(?:async )?(.+?) \()?(.+?):(\d+):(\d+)\)?$/
 
 const STRIP_PATTERNS = [
   'node_modules/pg',
+  'node_modules/mysql2',
   'node_modules/@prisma',
   'node_modules/drizzle-orm',
   'node_modules/kysely',

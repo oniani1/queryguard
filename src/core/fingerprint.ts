@@ -4,7 +4,7 @@ export function normalize(sql: string): string {
   const identifiers: string[] = []
   let result = sql
     .replace(/'(?:[^']|'')*'/g, '?')
-    .replace(/"[^"]*"/g, (match) => {
+    .replace(/"[^"]*"|`[^`]*`/g, (match) => {
       identifiers.push(match)
       return `\x00DQ${identifiers.length - 1}\x00`
     })
