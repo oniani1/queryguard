@@ -6,6 +6,7 @@ import {
   uninstallMysql2Hook,
   isMysql2HookInstalled,
 } from '../../src/drivers/mysql2.js'
+import { install, uninstall } from '../../src/drivers/install.js'
 import { createContext, runInContext } from '../../src/core/tracker.js'
 import { resetConfig } from '../../src/core/config.js'
 
@@ -380,6 +381,23 @@ describe('mysql2 Pool', () => {
     mysql2.Pool.prototype.execute = realOriginal
   })
 
+  it('installMysql2Hook accepts a custom module (pnpm isolation)', () => {
+    const fakeProto = {
+      query: function originalQuery() {},
+      execute: function originalExecute() {},
+    }
+    const fakeModule = {
+      Connection: { prototype: fakeProto },
+    }
+
+    installMysql2Hook(fakeModule as unknown as Parameters<typeof installMysql2Hook>[0])
+    expect(fakeProto.query.name).toBe('patchedQuery')
+    expect(fakeProto.execute.name).toBe('patchedExecute')
+    uninstallMysql2Hook()
+    expect(fakeProto.query.name).toBe('originalQuery')
+    expect(fakeProto.execute.name).toBe('originalExecute')
+  })
+
   it('uninstall restores Pool prototypes', () => {
     const originalQuery = mysql2.Pool.prototype.query
     const originalExecute = mysql2.Pool.prototype.execute
@@ -389,5 +407,19 @@ describe('mysql2 Pool', () => {
     uninstallMysql2Hook()
     expect(mysql2.Pool.prototype.query).toBe(originalQuery)
     expect(mysql2.Pool.prototype.execute).toBe(originalExecute)
+  })
+})
+
+describe('install() auto-detection', () => {
+  afterEach(() => {
+    uninstall()
+  })
+
+  it('install() picks up mysql2 automatically', async () => {
+    expect(isMysql2HookInstalled()).toBe(false)
+    await install()
+    expect(isMysql2HookInstalled()).toBe(true)
+    uninstall()
+    expect(isMysql2HookInstalled()).toBe(false)
   })
 })
