@@ -27,11 +27,11 @@ Every ORM makes it easy to write a loop that fires one query per row. Load 100 u
 
 Ruby solved this years ago with [Bullet](https://github.com/flyerhzm/bullet). The Node.js ecosystem had nothing comparable. ORM-specific lint rules catch some patterns, but they miss raw queries, cross-ORM projects, and anything behind an abstraction layer.
 
-queryguard works at the `pg` driver level. It does not care which ORM generated the SQL. If the query hits Postgres, queryguard sees it.
+queryguard works at the database driver level. It patches `pg` and `mysql2` directly. It does not care which ORM generated the SQL. If the query hits Postgres or MySQL, queryguard sees it.
 
 ## How it works
 
-queryguard monkey-patches `pg.Client.prototype.query` and `pg.Pool.prototype.query` at import time. Every query is recorded into an `AsyncLocalStorage` context scoped to your test or request. The SQL is normalized into a fingerprint (stripping literals, collapsing IN-lists), and when the same fingerprint appears more than `threshold` times outside a transaction, queryguard reports it as an N+1. No background threads, no network calls, no native modules.
+queryguard monkey-patches `pg.Client.prototype.query`, `pg.Pool.prototype.query`, and the equivalent `mysql2` methods at import time. Every query is recorded into an `AsyncLocalStorage` context scoped to your test or request. The SQL is normalized into a fingerprint (stripping literals, collapsing IN-lists), and when the same fingerprint appears more than `threshold` times outside a transaction, queryguard reports it as an N+1. No background threads, no network calls, no native modules.
 
 ## Hard numbers
 
@@ -39,8 +39,7 @@ queryguard monkey-patches `pg.Client.prototype.query` and `pg.Pool.prototype.que
 |--------|-------|
 | Package size | 18 KB |
 | Runtime dependencies | 0 |
-| Unit tests | 128 |
-| Integration tests | 7 |
+| Tests | 184 |
 | Overhead on Payload CMS test suite (136 tests) | 0% |
 | False positives on Payload CMS | 0 |
 
@@ -49,11 +48,13 @@ queryguard monkey-patches `pg.Client.prototype.query` and `pg.Pool.prototype.que
 | ORM | Supported | Notes |
 |-----|-----------|-------|
 | Prisma 7 (with `@prisma/adapter-pg`) | Yes | Prisma 7 routes queries through the `pg` driver |
-| Drizzle | Yes | |
+| Drizzle | Yes | pg and mysql2 |
 | Kysely | Yes | |
-| TypeORM | Yes | |
-| Knex | Yes | |
+| TypeORM | Yes | pg and mysql2 |
+| Knex | Yes | pg and mysql2 |
+| Sequelize | Yes | pg and mysql2 |
 | Raw `pg` | Yes | |
+| Raw `mysql2` | Yes | Connection and Pool, query and execute |
 | Prisma 6 | No | Prisma 6 uses a Rust query engine that bypasses the `pg` driver entirely |
 
 ## API
@@ -86,6 +87,38 @@ import { queryBudget } from 'qguard/vitest'
 
 test('dashboard runs at most 5 queries', async () => {
   await queryBudget(5, () => loadDashboard())
+})
+```
+
+### assertScaling
+
+Runs a function at two data cardinalities and flags any query whose count grows with the data size. Catches N+1 patterns that single-run detection misses when test fixtures have few records.
+
+```ts
+import { assertScaling } from 'qguard/vitest'
+
+test('post list queries do not scale with data', async () => {
+  await assertScaling({
+    setup: async (n) => {
+      await db.query('DELETE FROM posts')
+      await seedPosts(n)
+    },
+    run: () => handler(req, res),
+  })
+})
+```
+
+By default, qguard runs the code with 2 records and 3 records, plus an automatic warmup run to absorb connection initialization. If any query fingerprint's count changes between the two measured runs, it's flagged as data-dependent.
+
+Options:
+
+```ts
+await assertScaling({
+  setup: (n) => seedPosts(n),
+  run: () => handler(req, res),
+  teardown: () => db.query('DELETE FROM posts'),  // called between runs and after the last run
+  factors: [2, 3],   // default scale factors
+  warmup: true,      // default, primes connections and caches
 })
 ```
 
@@ -140,13 +173,57 @@ configure({
 })
 ```
 
+### Ignore blocks
+
+The `ignore` option on `assertNoNPlusOne` matches regex/string patterns against SQL. When the noisy queries use the same SQL as the queries you want to track (test seeds, third-party middleware), use `ignore()` to suppress a code section instead:
+
+```ts
+import { ignore } from 'qguard'
+
+await assertNoNPlusOne(async () => {
+  await ignore(async () => {
+    await seedTestData()       // not tracked
+  })
+  await handler(req, res)      // tracked
+})
+```
+
+Works inside middleware contexts too. Nesting is supported. Outside a tracking context, `ignore()` is a no-op.
+
+### Notifications
+
+Send N+1 detections to your logging pipeline, Slack, or Sentry.
+
+```ts
+import { configure } from 'qguard'
+import { loggerNotifier, slackNotifier, sentryNotifier } from 'qguard/notifiers'
+
+configure({
+  onDetection: [
+    loggerNotifier(pino()),
+    slackNotifier(process.env.SLACK_WEBHOOK_URL),
+    sentryNotifier(Sentry),
+  ],
+})
+```
+
+**loggerNotifier** accepts any object with a `warn(obj, msg)` method (pino, bunyan). Emits one structured log entry per detection.
+
+**slackNotifier** POSTs to a Slack webhook URL using native `fetch`. No-op if the URL is falsy (safe in environments without the secret).
+
+**sentryNotifier** calls `captureMessage` with a custom fingerprint per query fingerprint, so the same N+1 across deploys groups into one Sentry issue.
+
+By default, `notifyOnce: true` deduplicates by fingerprint hash across the process. 50 tests hitting the same N+1 produce 1 Slack message, not 50. Reset happens on `resetConfig()`.
+
+Middleware and test integrations both fire global notifiers. Per-route middleware `onDetection` callbacks still work and fire alongside global notifiers.
+
 ### Production guard
 
 queryguard is disabled by default when `NODE_ENV=production`. If you need it in production (for logging, not throwing), set `QUERYGUARD_FORCE=1`.
 
 ## Monorepo note
 
-In pnpm monorepos, each workspace gets its own copy of `pg`. queryguard patches the `pg` it can `import`, which may differ from the one your app uses. If detection is not working, pass your app's `pg` instance directly:
+In pnpm monorepos, each workspace gets its own copy of `pg` or `mysql2`. queryguard patches the driver it can `import`, which may differ from the one your app uses. If detection is not working, pass your app's driver instance directly:
 
 ```ts
 import pg from 'pg'
