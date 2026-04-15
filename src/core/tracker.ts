@@ -31,6 +31,7 @@ export interface TrackingContext {
   startTime: number
   currentTick: number
   tickScheduled: boolean
+  ignoring: boolean
 }
 
 export const trackingAls = new AsyncLocalStorage<TrackingContext>()
@@ -45,6 +46,7 @@ export function createContext(callerStack?: ReadonlyArray<StackFrame>): Tracking
     startTime: Date.now(),
     currentTick: 0,
     tickScheduled: false,
+    ignoring: false,
   }
 }
 
@@ -56,9 +58,19 @@ export function runInContext<T>(ctx: TrackingContext, fn: () => T): T {
   return trackingAls.run(ctx, fn)
 }
 
+export function ignore<T>(fn: () => Promise<T>): Promise<T>
+export function ignore<T>(fn: () => T): T
+export function ignore<T>(fn: () => T | Promise<T>): T | Promise<T> {
+  const ctx = trackingAls.getStore()
+  if (!ctx) return fn()
+  const shadow = { ...ctx, ignoring: true }
+  return trackingAls.run(shadow, fn)
+}
+
 export function recordQuery(sql: string, durationMs: number): void {
   const ctx = trackingAls.getStore()
   if (!ctx) return
+  if (ctx.ignoring) return
 
   const config = getConfig()
   if (!config.enabled) return

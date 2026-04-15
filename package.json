@@ -65,6 +65,11 @@
       "import": "./dist/middleware/fastify.js",
       "require": "./dist/middleware/fastify.js",
       "types": "./dist/middleware/fastify.d.ts"
+    },
+    "./notifiers": {
+      "import": "./dist/notifiers/index.js",
+      "require": "./dist/notifiers/index.js",
+      "types": "./dist/notifiers/index.d.ts"
     }
   },
   "files": [

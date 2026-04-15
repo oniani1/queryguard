@@ -40,7 +40,9 @@ const plugin: FastifyPluginCallback<QueryGuardMiddlewareOptions> = (instance, op
     const ctx = req.queryGuardCtx
     if (!ctx) return payload
     const report = detect(ctx)
-    const body = handleReport(report, mode, req, onDetection)
+    const body = handleReport(report, mode, req, onDetection, {
+      skipGlobalNotifiers: opts.skipGlobalNotifiers,
+    })
     if (body) {
       reply.code(500).type('text/plain')
       return body

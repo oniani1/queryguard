@@ -15,7 +15,9 @@ export function withQueryGuard(
     if (isDisabled()) return handler(req)
 
     const { result, report } = await trackQueries(() => handler(req))
-    const body = handleReport(report, mode, req, onDetection)
+    const body = handleReport(report, mode, req, onDetection, {
+      skipGlobalNotifiers: options?.skipGlobalNotifiers,
+    })
     if (body) {
       return new Response(body, { status: 500, headers: { 'Content-Type': 'text/plain' } })
     }

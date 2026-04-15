@@ -33,7 +33,9 @@ export function queryGuard(options?: QueryGuardMiddlewareOptions) {
         // For hard request failures, use queryguard/vitest in tests or
         // queryguard/next or queryguard/hono where pre-send interception works.
         const effectiveMode = mode === 'throw' ? 'warn' : mode
-        handleReport(report, effectiveMode, req, onDetection)
+        handleReport(report, effectiveMode, req, onDetection, {
+          skipGlobalNotifiers: options?.skipGlobalNotifiers,
+        })
       })
       next()
     })

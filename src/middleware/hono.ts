@@ -25,7 +25,9 @@ export function queryGuard(options?: QueryGuardMiddlewareOptions): MiddlewareHan
     })
 
     const report = detect(ctx)
-    const body = handleReport(report, mode, c.req.raw, onDetection)
+    const body = handleReport(report, mode, c.req.raw, onDetection, {
+      skipGlobalNotifiers: options?.skipGlobalNotifiers,
+    })
     if (body) {
       c.res = new Response(body, {
         status: 500,
