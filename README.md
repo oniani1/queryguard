@@ -37,11 +37,10 @@ queryguard monkey-patches `pg.Client.prototype.query`, `pg.Pool.prototype.query`
 
 | Metric | Value |
 |--------|-------|
-| Package size | 18 KB |
-| Runtime dependencies | 0 |
-| Tests | 184 |
-| Overhead on Payload CMS test suite (136 tests) | 0% |
-| False positives on Payload CMS | 0 |
+| Package size (tarball) | Under 40 KB (CI-gated) |
+| Runtime dependencies | 0 (CI-gated) |
+| Overhead on Payload CMS test suite (136 tests) | Negligible, not measurable in local runs |
+| False positives on Payload CMS (verified once, not in CI) | 0 (136 tests) |
 
 ## ORM support
 
@@ -171,6 +170,13 @@ configure({
   mode: 'warn',            // 'error' | 'warn' - controls middleware behavior
   verbose: true,           // extra logging (also set via QUERYGUARD_VERBOSE=1)
 })
+```
+
+`configure({ ignore: [...] })` replaces the current ignore list. To append a pattern, spread the existing list:
+
+```ts
+import { configure, getConfig } from 'qguard'
+configure({ ignore: [...getConfig().ignore, /new-pattern/] })
 ```
 
 ### Ignore blocks
