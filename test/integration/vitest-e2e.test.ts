@@ -3,7 +3,7 @@ import pg from 'pg'
 import { assertNoNPlusOne, queryBudget, QueryGuardError } from 'qguard/vitest'
 import { uninstall, resetConfig } from 'qguard'
 
-const DB_URL = 'postgresql://postgres:spike@localhost:5432/spike'
+const DB_URL = process.env.TEST_PG_URL ?? 'postgresql://postgres:test@localhost:5432/test'
 
 describe('vitest integration', () => {
   beforeEach(() => {

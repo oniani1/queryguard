@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import pg from 'pg'
 import { trackQueries, uninstall, resetConfig } from 'qguard'
 
-const DB_URL = 'postgresql://postgres:spike@localhost:5432/spike'
+const DB_URL = process.env.TEST_PG_URL ?? 'postgresql://postgres:test@localhost:5432/test'
 
 describe('pg raw integration', () => {
   beforeEach(() => {
