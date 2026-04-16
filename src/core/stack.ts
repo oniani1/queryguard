@@ -28,8 +28,10 @@ export function parseStack(stack: string): StackFrame[] {
     const line = rawLine.trim()
     const match = FRAME_RE.exec(line)
     if (!match) continue
+    const file = match[2]
+    if (file === undefined) continue
     frames.push({
-      file: match[2],
+      file,
       line: Number(match[3]),
       column: Number(match[4]),
       fn: match[1] ?? undefined,

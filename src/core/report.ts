@@ -50,13 +50,16 @@ export function formatReport(report: DetectionReport): string {
   if (report.detections.length === 0) return ''
 
   if (report.detections.length === 1) {
-    return formatDetection(report.detections[0])
+    const only = report.detections[0]
+    if (only) return formatDetection(only)
+    return ''
   }
 
   const parts: string[] = []
   for (let i = 0; i < report.detections.length; i++) {
-    const numbered = `[${i + 1}/${report.detections.length}] ${formatDetection(report.detections[i])}`
-    parts.push(numbered)
+    const d = report.detections[i]
+    if (!d) continue
+    parts.push(`[${i + 1}/${report.detections.length}] ${formatDetection(d)}`)
   }
   return parts.join('\n\n')
 }

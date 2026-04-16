@@ -180,8 +180,12 @@ export async function runAssertScaling(options: AssertScalingOptions): Promise<v
   }
 
   // Warmup run: prime connections and caches
+  const firstFactor = factors[0]
+  if (firstFactor === undefined) {
+    throw new Error('assertScaling requires at least one factor')
+  }
   if (warmup) {
-    await options.setup(factors[0])
+    await options.setup(firstFactor)
     await collectFingerprints(options.run)
   }
 
@@ -195,12 +199,14 @@ export async function runAssertScaling(options: AssertScalingOptions): Promise<v
 
   try {
     for (let i = 0; i < factors.length; i++) {
+      const factor = factors[i]
+      if (factor === undefined) continue
       if (i > 0 || warmup) {
         if (options.teardown) await options.teardown()
       }
-      await options.setup(factors[i])
+      await options.setup(factor)
       const result = await collectFingerprints(options.run)
-      runs.push({ factor: factors[i], ...result })
+      runs.push({ factor, ...result })
     }
   } finally {
     if (options.teardown) await options.teardown()

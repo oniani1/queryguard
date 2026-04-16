@@ -5,4 +5,15 @@ export type { DetectionReport, Detection } from './core/detector.js'
 export type { RecordedQuery, TrackingContext } from './core/tracker.js'
 export { ignore } from './core/tracker.js'
 export type { Notifier, NotificationContext } from './core/notify.js'
-export { trackQueries } from './integrations/shared.js'
+export type { StackFrame } from './core/stack.js'
+export {
+  trackQueries,
+  QueryGuardError,
+  ScalingError,
+} from './integrations/shared.js'
+export type {
+  AssertOptions,
+  AssertScalingOptions,
+  ScalingDetection,
+  ScalingReport,
+} from './integrations/shared.js'

@@ -72,9 +72,10 @@ function extractRequestInfo(req: unknown): { method: string; url: string } | und
     typeof (req as Record<string, unknown>).method === 'string' &&
     typeof (req as Record<string, unknown>).url === 'string'
   ) {
+    const asRec = req as { method?: string; url?: string }
     return {
-      method: (req as Record<string, string>).method,
-      url: (req as Record<string, string>).url,
+      method: asRec.method ?? '',
+      url: asRec.url ?? '',
     }
   }
   return undefined

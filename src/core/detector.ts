@@ -27,25 +27,27 @@ export function detect(ctx: TrackingContext): DetectionReport {
     if (count < config.threshold) continue
 
     const queries = ctx.queries.filter((q) => q.fingerprintHash === hash)
+    const first = queries[0]
+    if (!first) continue
 
     if (!config.detectInsideTransactions && queries.every((q) => q.inTransaction)) {
       continue
     }
 
-    const allSameTick = queries.every((q) => q.tick === queries[0].tick)
+    const allSameTick = queries.every((q) => q.tick === first.tick)
     const type: Detection['type'] =
       allSameTick && !config.concurrentDuplicatesAreNPlusOne
         ? 'concurrent-duplicates'
         : 'n-plus-one'
 
-    const callerFrame = queries[0].callerFrame ?? ctx.callerStack?.[0]
+    const callerFrame = first.callerFrame ?? ctx.callerStack?.[0]
 
     const totalDurationMs = queries.reduce((sum, q) => sum + q.durationMs, 0)
 
     allDetections.push({
       type,
       fingerprintHash: hash,
-      normalizedSql: queries[0].normalizedSql,
+      normalizedSql: first.normalizedSql,
       occurrences: queries.length,
       queries,
       callerFrame,
