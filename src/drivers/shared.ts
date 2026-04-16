@@ -1,8 +1,15 @@
+import { AsyncLocalStorage } from 'node:async_hooks'
 import { recordQuery } from '../core/tracker.js'
 
 export type ExtractSql = (args: unknown[]) => string
 
 export type CompleteQuery = (result: unknown, done: () => void) => unknown
+
+// Set by the outermost patched call. A nested call (e.g. mysql2's Pool.query
+// delegating to Connection.query — both patched — through a context that
+// preserves AsyncLocalStorage) sees this flag and skips re-recording so a
+// single user-observable query is counted once.
+const insidePatchedCall = new AsyncLocalStorage<boolean>()
 
 export function createPatchedMethod(options: {
   extractSql: ExtractSql
@@ -13,6 +20,13 @@ export function createPatchedMethod(options: {
   const { extractSql, original, completeQuery, name } = options
 
   const patched = function patched(this: unknown, ...args: unknown[]): unknown {
+    if (insidePatchedCall.getStore()) {
+      return original.apply(this, args)
+    }
+    return insidePatchedCall.run(true, () => runPatched.call(this, args))
+  }
+
+  function runPatched(this: unknown, args: unknown[]): unknown {
     const sql = extractSql(args)
     const startTime = performance.now()
     let recorded = false

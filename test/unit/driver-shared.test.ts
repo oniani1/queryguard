@@ -124,6 +124,36 @@ describe('createPatchedMethod', () => {
     expect(ctx.queries).toHaveLength(1)
   })
 
+  it('a nested patched call does not re-record the same query', async () => {
+    // Simulates mysql2 Pool.query delegating to Connection.query while
+    // AsyncLocalStorage context survives the boundary. Only the outer call
+    // should record; the inner call must bypass recording.
+    const innerOriginal = vi.fn((_sql: string) => 'inner-result')
+    const innerPatched = createPatchedMethod({
+      extractSql: (args) => args[0] as string,
+      original: innerOriginal as (...args: unknown[]) => unknown,
+      completeQuery: (result, done) => {
+        done()
+        return result
+      },
+    })
+
+    const outerPatched = createPatchedMethod({
+      extractSql: (args) => args[0] as string,
+      original: (...args: unknown[]) => innerPatched(...args),
+      completeQuery: (result, done) => {
+        done()
+        return result
+      },
+    })
+
+    const ctx = createContext()
+    await runInContext(ctx, () => outerPatched('SELECT * FROM users'))
+
+    expect(ctx.queries).toHaveLength(1)
+    expect(innerOriginal).toHaveBeenCalledOnce()
+  })
+
   it('respects the name option', () => {
     const patched = createPatchedMethod({
       extractSql: () => 'SELECT 1',
