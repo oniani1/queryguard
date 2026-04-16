@@ -11,13 +11,15 @@ export function normalize(sql: string): string {
     .replace(/\$\d+/g, '?')
     .replace(/@p\d+/g, '?')
     .replace(/:\w+/g, '?')
-    .replace(/\b\d+(?:\.\d+)?\b/g, '?')
+    .replace(/(?<![a-zA-Z_$)\]])-?\b\d+(?:\.\d+)?\b/g, '?')
     .replace(/\s+/g, ' ')
     .trim()
     .toLowerCase()
 
   for (let i = 0; i < identifiers.length; i++) {
-    result = result.replace(`\x00dq${i}\x00`, identifiers[i])
+    const id = identifiers[i]
+    if (id === undefined) continue
+    result = result.replace(`\x00dq${i}\x00`, id)
   }
 
   return result
