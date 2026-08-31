@@ -444,7 +444,7 @@ footer {
 <section id="how">
   <div class="container">
     <div class="section-label">How it works</div>
-    <div class="section-title">Three lines of code. No config files.</div>
+    <div class="section-title">One config entry. Every test guarded.</div>
     <div class="section-desc">QueryGuard intercepts <code>pg.Client</code> and <code>pg.Pool</code> queries at the driver level. Every query is fingerprinted and tracked per async context. If the same query repeats above a threshold, your test fails.</div>
 
     <div class="steps">
@@ -452,13 +452,13 @@ footer {
         <div class="step-num">01</div>
         <h3>Install</h3>
         <p><code>npm install qguard</code></p>
-        <p style="margin-top:12px">No plugins to register. No setup files to create. No environment variables to set.</p>
+        <p style="margin-top:12px">No plugin package, generated setup file, or environment variable required.</p>
       </div>
       <div class="step">
         <div class="step-num">02</div>
-        <h3>Wrap your test</h3>
-        <p><code>await assertNoNPlusOne(() => handler(req, res))</code></p>
-        <p style="margin-top:12px">Import from <code>queryguard/vitest</code> or <code>queryguard/jest</code>. One function call wraps your handler.</p>
+        <h3>Enable the suite</h3>
+        <p><code>setupFiles: [qguardSetup]</code></p>
+        <p style="margin-top:12px">Import <code>qguardSetup</code> from <code>qguard/vitest</code>. Every test is guarded automatically.</p>
       </div>
       <div class="step">
         <div class="step-num">03</div>

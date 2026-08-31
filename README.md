@@ -14,12 +14,18 @@ npm install qguard
 ```
 
 ```ts
-import { assertNoNPlusOne } from 'qguard/vitest'
+// vitest.config.ts
+import { defineConfig } from 'vitest/config'
+import { qguardSetup } from 'qguard/vitest'
 
-test('listing users does not N+1', async () => {
-  await assertNoNPlusOne(() => handler(req, res))
+export default defineConfig({
+  test: {
+    setupFiles: [qguardSetup],
+  },
 })
 ```
+
+Every test now fails when it produces an N+1 query pattern. No per-test wrapper is required.
 
 ## Why
 
@@ -58,9 +64,39 @@ queryguard monkey-patches `pg.Client.prototype.query`, `pg.Pool.prototype.query`
 
 ## API
 
+### Automatic Vitest enforcement
+
+Add `qguardSetup` to Vitest's setup files to guard the complete suite:
+
+```ts
+// vitest.config.ts
+import { defineConfig } from 'vitest/config'
+import { qguardSetup } from 'qguard/vitest'
+
+export default defineConfig({
+  test: {
+    setupFiles: [qguardSetup],
+  },
+})
+```
+
+`qguardSetup` is the absolute path to the published `qguard/vitest/setup` entry point. Vitest
+resolves string values in `setupFiles` relative to the project root, so use the exported path
+instead of the bare string `'qguard/vitest/setup'`.
+
+The setup module installs the database hooks once and creates a separate `AsyncLocalStorage`
+context for every test. It includes queries from the test's `beforeEach` hooks, test body, and
+`afterEach` hooks, and safely isolates concurrent tests. Any detection is reported as a
+`QueryGuardError` on the test that produced it.
+
+Queries executed while test files are being imported or in `beforeAll`/`afterAll` cannot be
+attributed to an individual test and are not tracked by this integration. Remove `qguardSetup`
+from the config to disable suite-wide enforcement. The explicit APIs below remain useful for
+narrower scopes, query budgets, and scaling checks.
+
 ### assertNoNPlusOne
 
-Runs a function and throws if any N+1 pattern is detected. Available from `queryguard/vitest` and `queryguard/jest`.
+Runs a function and throws if any N+1 pattern is detected. Available from `qguard/vitest` and `qguard/jest`.
 
 ```ts
 import { assertNoNPlusOne } from 'qguard/vitest'

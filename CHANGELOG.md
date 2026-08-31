@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Features
+
+- Add automatic Vitest enforcement through the `qguard/vitest/setup` export and the
+  `qguardSetup` path for `test.setupFiles`. Each test receives an isolated query context and fails
+  with `QueryGuardError` when it produces an N+1 pattern.
+
 ## 0.3.1
 
 ### Fixes
