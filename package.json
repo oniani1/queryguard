@@ -29,7 +29,9 @@
     "typescript"
   ],
   "types": "./dist/index.d.ts",
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/integrations/vitest-setup.js"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -40,6 +42,11 @@
       "import": "./dist/integrations/vitest.js",
       "require": "./dist/integrations/vitest.js",
       "types": "./dist/integrations/vitest.d.ts"
+    },
+    "./vitest/setup": {
+      "import": "./dist/integrations/vitest-setup.js",
+      "require": "./dist/integrations/vitest-setup.js",
+      "types": "./dist/integrations/vitest-setup.d.ts"
     },
     "./jest": {
       "import": "./dist/integrations/jest.js",
